@@ -64,6 +64,13 @@ public class TicketDetailsService implements TicketDetailsInterface {
     public Ticket cancelTicket(String pnr) {
         Ticket ticket = ticketRepository.findTicketByPnr(pnr);
         LocalDateTime currentTime = LocalDateTime.now();
+
+        if(ticket==null){
+            log.error("Invalid pnr number: {}",pnr);
+            throw new TicketNotFoundException("Invalid pnr number");
+        }
+
+
         ScheduleDTO schedule = flightClient.getSchedule(ticket.getScheduleId());
 
         Duration diff = Duration.between(currentTime, schedule.departureTime()).abs();
@@ -73,10 +80,7 @@ public class TicketDetailsService implements TicketDetailsInterface {
             throw new InvalidScheduleTimeException("Less than 24 hours gap");
         }
 
-        if(ticket==null){
-            log.error("Invalid pnr number: {}",pnr);
-            throw new TicketNotFoundException("Invalid pnr number");
-        }
+
 
         if(ticket.getStatus()==Status.CANCELED){
             return ticket;
