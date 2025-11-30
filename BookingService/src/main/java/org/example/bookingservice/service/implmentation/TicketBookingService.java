@@ -1,10 +1,7 @@
 package org.example.bookingservice.service.implmentation;
 
 import lombok.extern.slf4j.Slf4j;
-import org.example.bookingservice.dto.PassengerDTO;
-import org.example.bookingservice.dto.ScheduleDTO;
-import org.example.bookingservice.dto.SeatsDTO;
-import org.example.bookingservice.dto.TicketBookingDTO;
+import org.example.bookingservice.dto.*;
 import org.example.bookingservice.exception.InvalidScheduleTimeException;
 import org.example.bookingservice.exception.SeatNotAvailableException;
 import org.example.bookingservice.feign.FlightClient;
@@ -12,6 +9,7 @@ import org.example.bookingservice.model.entity.*;
 import org.example.bookingservice.model.enums.Status;
 import org.example.bookingservice.repository.TicketRepository;
 import org.example.bookingservice.service.TicketBookingInterface;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,10 +21,13 @@ public class TicketBookingService implements TicketBookingInterface {
 
     private final TicketRepository ticketRepository;
     private final FlightClient flightClient;
+    private final KafkaTemplate<String, KafkaSeatsDTO> kafka;
 
-    public TicketBookingService(TicketRepository ticketRepository, FlightClient flightClient) {
+    public TicketBookingService(TicketRepository ticketRepository, FlightClient flightClient
+                                ,KafkaTemplate<String, KafkaSeatsDTO> kafka) {
         this.ticketRepository = ticketRepository;
         this.flightClient = flightClient;
+        this.kafka = kafka;
     }
 
     @Override
@@ -59,7 +60,9 @@ public class TicketBookingService implements TicketBookingInterface {
             throw new SeatNotAvailableException("Not enough seats available");
         }
 
-        flightClient.reserveSeats(outbound.id(), seatsDTO);
+        kafka.send("ticket.booked",new KafkaSeatsDTO(outbound.id(),seatsDTO));
+
+//        flightClient.reserveSeats(outbound.id(), seatsDTO);
 
         Ticket saved = createTicket(ticketDTO, outbound, returnTrip);
 

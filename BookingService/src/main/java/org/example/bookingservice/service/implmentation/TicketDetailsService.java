@@ -7,6 +7,8 @@ import java.util.List;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.example.bookingservice.dto.AddSeatsDTO;
+import org.example.bookingservice.dto.KafkaSeatsDTO;
 import org.example.bookingservice.dto.ScheduleDTO;
 import org.example.bookingservice.dto.SeatsDTO;
 import org.example.bookingservice.exception.InvalidScheduleTimeException;
@@ -18,6 +20,7 @@ import org.example.bookingservice.model.entity.Users;
 import org.example.bookingservice.model.enums.Status;
 import org.example.bookingservice.repository.*;
 import org.example.bookingservice.service.TicketDetailsInterface;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -28,13 +31,16 @@ public class TicketDetailsService implements TicketDetailsInterface {
     private final UsersRepository usersRepository;
     private final PassengerRepository passengerRepository;
     private final FlightClient flightClient;
+    private final KafkaTemplate<String, Object> kafka;
 
     public TicketDetailsService(TicketRepository ticketRepository, UsersRepository usersRepository,
-                                PassengerRepository passengerRepository, FlightClient flightClient) {
+                                PassengerRepository passengerRepository, FlightClient flightClient,
+                                KafkaTemplate<String,Object> kafka) {
         this.ticketRepository = ticketRepository;
         this.usersRepository = usersRepository;
         this.passengerRepository = passengerRepository;
         this.flightClient = flightClient;
+        this.kafka = kafka;
     }
 
     @Override
@@ -70,7 +76,6 @@ public class TicketDetailsService implements TicketDetailsInterface {
             throw new TicketNotFoundException("Invalid pnr number");
         }
 
-
         ScheduleDTO schedule = flightClient.getSchedule(ticket.getScheduleId());
 
         Duration diff = Duration.between(currentTime, schedule.departureTime()).abs();
@@ -80,8 +85,6 @@ public class TicketDetailsService implements TicketDetailsInterface {
             throw new InvalidScheduleTimeException("Less than 24 hours gap");
         }
 
-
-
         if(ticket.getStatus()==Status.CANCELED){
             return ticket;
         }
@@ -89,7 +92,9 @@ public class TicketDetailsService implements TicketDetailsInterface {
         ticket.setStatus(Status.CANCELED);
         ticketRepository.save(ticket);
 
-        flightClient.addSeats(ticket.getScheduleId(),ticket.getPassengers().size());
+//        flightClient.addSeats(ticket.getScheduleId(),ticket.getPassengers().size());
+        kafka.send("add.seats",new AddSeatsDTO(ticket.getScheduleId(),ticket.getPassengers().size()));
+
         List<String> seats = new ArrayList<>();
 
         ticket.getPassengers().forEach(passenger -> {
@@ -99,7 +104,9 @@ public class TicketDetailsService implements TicketDetailsInterface {
         });
 
         //send request to flight service to mark the seats as vacant
-        flightClient.deleteSeats(ticket.getScheduleId(),new SeatsDTO(seats));
+        kafka.send("ticket.cancelled",new KafkaSeatsDTO(ticket.getScheduleId(),new SeatsDTO(seats)));
+//        flightClient.deleteSeats(ticket.getScheduleId(),new SeatsDTO(seats));
+
         return ticket;
     }
 }
