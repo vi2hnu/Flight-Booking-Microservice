@@ -31,6 +31,7 @@ public class ScheduleService implements ScheduleInterface {
            log.error("Schedule not found: {}",scheduleId);
            throw new ScheduleNotFoundException("Schedule not found: "+scheduleId);
        }
+       log.info(new ScheduleDTO(schedule).toString());
        return new ScheduleDTO(schedule);
     }
 

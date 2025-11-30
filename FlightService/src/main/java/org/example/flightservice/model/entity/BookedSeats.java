@@ -21,4 +21,6 @@ public class BookedSeats {
         this.schedule = schedule;
         this.seatPos = seat;
     }
+
+    public BookedSeats(){}
 }
