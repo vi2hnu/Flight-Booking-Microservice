@@ -1,0 +1,101 @@
+package org.example.bookingservice.service.implmentation;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
+import org.example.bookingservice.dto.ScheduleDTO;
+import org.example.bookingservice.dto.SeatsDTO;
+import org.example.bookingservice.exception.InvalidScheduleTimeException;
+import org.example.bookingservice.exception.TicketNotFoundException;
+import org.example.bookingservice.exception.UsersNotFoundException;
+import org.example.bookingservice.feign.FlightClient;
+import org.example.bookingservice.model.entity.Ticket;
+import org.example.bookingservice.model.entity.Users;
+import org.example.bookingservice.model.enums.Status;
+import org.example.bookingservice.repository.*;
+import org.example.bookingservice.service.TicketDetailsInterface;
+import org.springframework.stereotype.Service;
+
+@Slf4j
+@Service
+public class TicketDetailsService implements TicketDetailsInterface {
+
+    private final TicketRepository ticketRepository;
+    private final UsersRepository usersRepository;
+    private final PassengerRepository passengerRepository;
+    private final FlightClient flightClient;
+
+    public TicketDetailsService(TicketRepository ticketRepository, UsersRepository usersRepository,
+                                PassengerRepository passengerRepository, FlightClient flightClient) {
+        this.ticketRepository = ticketRepository;
+        this.usersRepository = usersRepository;
+        this.passengerRepository = passengerRepository;
+        this.flightClient = flightClient;
+    }
+
+    @Override
+    public Ticket findTicketByPnr(String pnr) {
+        Ticket ticket = ticketRepository.findTicketByPnr(pnr);
+
+        //check if ticket is valid
+        if(ticket == null){
+            log.error("Invalid pnr number: {}",pnr);
+            throw new TicketNotFoundException("Invalid pnr number");
+        }
+        return ticket;
+    }
+
+    @Override
+    public List<Ticket> findHistoryByEmail(String email) {
+        Users user = usersRepository.findByEmail(email);
+        if(user==null){
+            log.error("User not found: {}",email);
+            throw new UsersNotFoundException("User Not Found");
+        }
+        return ticketRepository.findAllByBookedByUsers_Id(user.getId());
+    }
+
+    @Override
+    @Transactional
+    public Ticket cancelTicket(String pnr) {
+        Ticket ticket = ticketRepository.findTicketByPnr(pnr);
+        LocalDateTime currentTime = LocalDateTime.now();
+        ScheduleDTO schedule = flightClient.getSchedule(ticket.getScheduleId());
+
+        Duration diff = Duration.between(currentTime, schedule.departureTime()).abs();
+
+        if (diff.toHours() < 24) {
+            log.error("Cancellation window is 24 hours");
+            throw new InvalidScheduleTimeException("Less than 24 hours gap");
+        }
+
+        if(ticket==null){
+            log.error("Invalid pnr number: {}",pnr);
+            throw new TicketNotFoundException("Invalid pnr number");
+        }
+
+        if(ticket.getStatus()==Status.CANCELED){
+            return ticket;
+        }
+
+        ticket.setStatus(Status.CANCELED);
+        ticketRepository.save(ticket);
+
+        flightClient.addSeats(ticket.getScheduleId(),ticket.getPassengers().size());
+        List<String> seats = new ArrayList<>();
+
+        ticket.getPassengers().forEach(passenger -> {
+            //marking the booked seats as vacant
+            seats.add(passenger.getSeatPosition());
+            passengerRepository.delete(passenger);
+        });
+
+        //send request to flight service to mark the seats as vacant
+        flightClient.deleteSeats(ticket.getScheduleId(),new SeatsDTO(seats));
+        return ticket;
+    }
+}
