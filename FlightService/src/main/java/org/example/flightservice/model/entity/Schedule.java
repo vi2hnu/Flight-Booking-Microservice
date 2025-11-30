@@ -2,6 +2,7 @@ package org.example.flightservice.model.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.example.flightservice.dto.ScheduleDTO;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,5 +34,4 @@ public class Schedule {
     private int seatsAvailable;
 
     private int duration;
-
 }
