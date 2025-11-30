@@ -8,7 +8,6 @@ import org.example.flightservice.model.entity.Schedule;
 import org.example.flightservice.repository.CityRepository;
 import org.example.flightservice.repository.ScheduleRepository;
 import org.example.flightservice.service.SearchInterface;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

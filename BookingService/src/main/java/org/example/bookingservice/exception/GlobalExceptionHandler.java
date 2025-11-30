@@ -1,4 +1,4 @@
-package org.example.flightservice.exception;
+package org.example.bookingservice.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +45,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(UsersNotFoundException.class)
+    public ResponseEntity<String> handleUserNotFound(UsersNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(TicketNotFoundException.class)
+    public ResponseEntity<String> handleTicketNotFound(TicketNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
 
     @ExceptionHandler(ScheduleConflictException.class)
     public ResponseEntity<String> handleScheduleConflict(ScheduleConflictException ex) {
@@ -56,9 +65,9 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(ScheduleNotFoundException.class)
-    public ResponseEntity<String> handleScheduleNotFound(ScheduleNotFoundException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    @ExceptionHandler(SeatNotAvailableException.class)
+    public ResponseEntity<String> handleSeatNotAvailable(SeatNotAvailableException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
     // fallback for any other exceptions

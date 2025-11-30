@@ -16,4 +16,9 @@ public class BookedSeats {
     @ManyToOne
     @JoinColumn(name = "schedule_id")
     private Schedule schedule;
+
+    public BookedSeats(Schedule schedule, String seat) {
+        this.schedule = schedule;
+        this.seatPos = seat;
+    }
 }
