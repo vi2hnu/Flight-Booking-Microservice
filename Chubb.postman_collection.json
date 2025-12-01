@@ -1,0 +1,204 @@
+{
+	"info": {
+		"_postman_id": "d7214c82-4974-4231-a2f3-0ba9797796ca",
+		"name": "Chubb",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "36929863"
+	},
+	"item": [
+		{
+			"name": "Flight Service",
+			"item": [
+				{
+					"name": "Add flight schedule",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"flightId\": 4,\n  \"fromCityId\": 4,\n  \"toCityId\": 2,\n  \"departureDate\": \"2026-07-12\",\n  \"departureTime\": \"2026-07-12T09:30:00\",\n  \"price\": 4500.50,\n  \"seatsAvailable\": 120,\n  \"duration\": 180\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/flightservice/api/flight/airline/inventory",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"flightservice",
+								"api",
+								"flight",
+								"airline",
+								"inventory"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Flight",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fromCityCode\": \"BLR\",\n    \"toCityCode\":\"BOM\",\n    \"date\" : \"2026-01-22\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/flightservice/api/flight/search",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"flightservice",
+								"api",
+								"flight",
+								"search"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Booking Service",
+			"item": [
+				{
+					"name": "Search by pnr",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:9000/bookingservice/api/flight/ticket/PNR17645920003131",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"bookingservice",
+								"api",
+								"flight",
+								"ticket",
+								"PNR17645920003131"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel a ticket",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:9000/bookingservice/api/flight/booking/cancel/PNR17645214757551",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"bookingservice",
+								"api",
+								"flight",
+								"booking",
+								"cancel",
+								"PNR17645214757551"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get details using email",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:9000/bookingservice/api/flight/booking/history/vishnuvaradhankr@gmail.com",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"bookingservice",
+								"api",
+								"flight",
+								"booking",
+								"history",
+								"vishnuvaradhankr@gmail.com"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Book ticket",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user\": {\n    \"id\": 1,\n    \"name\": \"Vinod Patel\",\n    \"email\": \"vishnuvaradhankr@gmail.com\",\n    \"gender\": \"MALE\"\n  },\n  \"scheduleId\": 8,\n  \"returnTripId\": null,\n  \"passengers\": [\n    {\n       \"name\": \"Ramesh Kumar\",\n       \"gender\": \"MALE\",\n       \"meal\": \"VEG\",\n       \"seatPos\": \"2C\"\n    },\n    {\n      \"name\": \"Anita Singh\",\n      \"gender\": \"FEMALE\",\n      \"meal\": \"NONVEG\",\n      \"seatPos\": \"2A\"\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/bookingservice/api/flight/booking/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"bookingservice",
+								"api",
+								"flight",
+								"booking",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
