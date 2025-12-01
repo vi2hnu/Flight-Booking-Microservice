@@ -21,10 +21,10 @@ public class TicketBookingService implements TicketBookingInterface {
 
     private final TicketRepository ticketRepository;
     private final FlightClient flightClient;
-    private final KafkaTemplate<String, KafkaSeatsDTO> kafka;
+    private final KafkaTemplate<String, KafkaTicketDTO> kafka;
 
     public TicketBookingService(TicketRepository ticketRepository, FlightClient flightClient
-                                ,KafkaTemplate<String, KafkaSeatsDTO> kafka) {
+                                ,KafkaTemplate<String, KafkaTicketDTO> kafka) {
         this.ticketRepository = ticketRepository;
         this.flightClient = flightClient;
         this.kafka = kafka;
@@ -60,8 +60,7 @@ public class TicketBookingService implements TicketBookingInterface {
             throw new SeatNotAvailableException("Not enough seats available");
         }
 
-        kafka.send("ticket.booked",new KafkaSeatsDTO(outbound.id(),seatsDTO));
-
+        kafka.send("ticket.booked",new KafkaTicketDTO(ticketDTO.user(),outbound,returnTrip,ticketDTO.passengers()));
 
         Ticket saved = createTicket(ticketDTO, outbound, returnTrip);
 

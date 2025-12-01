@@ -1,6 +1,7 @@
 package org.example.flightservice.service.implementation;
 
 import lombok.extern.slf4j.Slf4j;
+import org.example.flightservice.dto.KafkaTicketDTO;
 import org.example.flightservice.dto.ScheduleDTO;
 import org.example.flightservice.dto.SeatsDTO;
 import org.example.flightservice.exception.ScheduleNotFoundException;
@@ -11,6 +12,9 @@ import org.example.flightservice.repository.ScheduleRepository;
 import org.example.flightservice.service.ScheduleInterface;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -42,7 +46,13 @@ public class ScheduleService implements ScheduleInterface {
     }
 
     @Override
-    public boolean reserveSeats(Long scheduleId, SeatsDTO seatsDTO) {
+    public boolean reserveSeats(KafkaTicketDTO kafkaTicketDTO) {
+        Long scheduleId = kafkaTicketDTO.scheduleDTO().id();
+        List<String> seats = new ArrayList<>();
+        kafkaTicketDTO.passengers().stream()
+                .forEach(passenger->seats.add(passenger.seatPos()));
+        SeatsDTO seatsDTO = new SeatsDTO(seats);
+
         Schedule schedule = scheduleRepository.findScheduleById(scheduleId);
 
         if(schedule == null){
@@ -58,9 +68,17 @@ public class ScheduleService implements ScheduleInterface {
 
     @Transactional
     @Override
-    public void deleteSeats(Long scheduleId, SeatsDTO seatsDTO) {
+    public void deleteSeats(KafkaTicketDTO kafkaTicketDTO) {
+        Long scheduleId = kafkaTicketDTO.scheduleDTO().id();
+        List<String> seats = new ArrayList<>();
+        kafkaTicketDTO.passengers().stream()
+                .forEach(passenger->seats.add(passenger.seatPos()));
+        SeatsDTO seatsDTO = new SeatsDTO(seats);
+
         seatsDTO.seats().stream()
                 .forEach(seat -> bookedSeatsRepository.deleteBySchedule_IdAndSeatPos(scheduleId,seat));
+
+        addSeats(scheduleId,seatsDTO.seats().size());
     }
 
     @Override

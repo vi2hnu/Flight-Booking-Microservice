@@ -7,10 +7,7 @@ import java.util.List;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.example.bookingservice.dto.AddSeatsDTO;
-import org.example.bookingservice.dto.KafkaSeatsDTO;
-import org.example.bookingservice.dto.ScheduleDTO;
-import org.example.bookingservice.dto.SeatsDTO;
+import org.example.bookingservice.dto.*;
 import org.example.bookingservice.exception.InvalidScheduleTimeException;
 import org.example.bookingservice.exception.TicketNotFoundException;
 import org.example.bookingservice.exception.UsersNotFoundException;
@@ -78,6 +75,11 @@ public class TicketDetailsService implements TicketDetailsInterface {
 
         ScheduleDTO schedule = flightClient.getSchedule(ticket.getScheduleId());
 
+        ScheduleDTO returnTrip = null;
+        if(ticket.getReturnTripScheduleId()!=null){
+            returnTrip = flightClient.getSchedule(ticket.getReturnTripScheduleId());
+        }
+
         Duration diff = Duration.between(currentTime, schedule.departureTime()).abs();
 
         if (diff.toHours() < 24) {
@@ -92,8 +94,6 @@ public class TicketDetailsService implements TicketDetailsInterface {
         ticket.setStatus(Status.CANCELED);
         ticketRepository.save(ticket);
 
-        kafka.send("add.seats",new AddSeatsDTO(ticket.getScheduleId(),ticket.getPassengers().size()));
-
         List<String> seats = new ArrayList<>();
 
         ticket.getPassengers().forEach(passenger -> {
@@ -102,8 +102,11 @@ public class TicketDetailsService implements TicketDetailsInterface {
             passengerRepository.delete(passenger);
         });
 
-        //send request to flight service to mark the seats as vacant
-        kafka.send("ticket.cancelled",new KafkaSeatsDTO(ticket.getScheduleId(),new SeatsDTO(seats)));
+        List<PassengerDTO> passengers = new ArrayList<>();
+        ticket.getPassengers().stream()
+                        .forEach(passenger->passengers.add(new PassengerDTO(passenger)));
+
+        kafka.send("ticket.cancelled",new KafkaTicketDTO(ticket.getBookedByUsers(),schedule,returnTrip,passengers));
 
         return ticket;
     }
