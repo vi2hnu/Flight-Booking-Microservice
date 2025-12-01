@@ -46,9 +46,6 @@ class BookingControllerTest {
         user.setEmail("john@example.com");
         user.setGender(Gender.MALE);
 
-        PassengerDTO passenger = new PassengerDTO("Alice", Gender.FEMALE, Meal.VEG, "A1");
-        TicketBookingDTO dto = new TicketBookingDTO(user, 1L, null, List.of(passenger));
-
         Ticket ticket = new Ticket();
         ticket.setPnr("PNR123");
 

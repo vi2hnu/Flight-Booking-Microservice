@@ -19,7 +19,7 @@ public class ScheduleService implements ScheduleInterface {
 
     private final ScheduleRepository scheduleRepository;
     private final BookedSeatsRepository bookedSeatsRepository;
-
+    private static final String scheduleNotFound = "Schedule not found: {}";
     public ScheduleService(ScheduleRepository scheduleRepository,BookedSeatsRepository bookedSeatsRepository) {
         this.scheduleRepository = scheduleRepository;
         this.bookedSeatsRepository = bookedSeatsRepository;
@@ -29,7 +29,7 @@ public class ScheduleService implements ScheduleInterface {
     public ScheduleDTO getSchedule(Long scheduleId) {
        Schedule schedule = scheduleRepository.findScheduleById(scheduleId);
        if(schedule == null){
-           log.error("Schedule not found: {}",scheduleId);
+           log.error(scheduleNotFound,scheduleId);
            throw new ScheduleNotFoundException("Schedule not found: "+scheduleId);
        }
        log.info(new ScheduleDTO(schedule).toString());
@@ -47,7 +47,7 @@ public class ScheduleService implements ScheduleInterface {
         Schedule schedule = scheduleRepository.findScheduleById(scheduleId);
 
         if(schedule == null){
-            log.error("Schedule not found: {}",scheduleId);
+            log.error(scheduleNotFound,scheduleId);
             throw new ScheduleNotFoundException("Schedule not found: "+scheduleId);
         }
 
@@ -71,7 +71,7 @@ public class ScheduleService implements ScheduleInterface {
         Schedule schedule = scheduleRepository.findScheduleById(scheduleId);
 
         if(schedule == null){
-           log.error("Schedule not found: {}",scheduleId);
+           log.error(scheduleNotFound,scheduleId);
            throw new ScheduleNotFoundException("Schedule not found: "+scheduleId);
         }
 

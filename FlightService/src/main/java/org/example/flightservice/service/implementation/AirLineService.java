@@ -34,7 +34,7 @@ public class AirLineService implements AirLineInterface {
         this.flightRepository = flightRepository;
         this.cityRepository = cityRepository;
         this.kafka = kafka;
-    };
+    }
 
     @Override
     public Schedule addSchedule(ScheduleDTO scheduleDTO) {

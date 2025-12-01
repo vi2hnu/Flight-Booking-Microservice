@@ -28,9 +28,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
-public class AirLineTest {
+class AirLineTest {
 
     @Mock
     private ScheduleRepository scheduleRepository;
@@ -48,28 +49,33 @@ public class AirLineTest {
     private AirLineService airLineService;
 
     @Test
-    void addSchedule_throwsFlightNotFound(){
+    void addSchedule_throwsFlightNotFound() {
         Flight flight = new Flight();
         flight.setId(1L);
         Schedule schedule = new Schedule();
         schedule.setFlight(flight);
 
         lenient().when(flightRepository.findFlightById(1L)).thenReturn(null);
+        ScheduleDTO dto = new ScheduleDTO(schedule);
 
-        assertThrows(FlightNotFoundException.class, () -> airLineService.addSchedule(new ScheduleDTO(schedule)));
+        assertThrows(FlightNotFoundException.class, () -> airLineService.addSchedule(dto));
     }
 
+
     @Test
-    void addSchedule_throwsInvalidScheduleTimeException(){
+    void addSchedule_throwsInvalidScheduleTimeException() {
         Flight flight = new Flight();
         flight.setId(1L);
         Schedule schedule = new Schedule();
         schedule.setFlight(flight);
         schedule.setDepartureTime(LocalDateTime.now().minusMinutes(120));
-        when(flightRepository.findFlightById(1L)).thenReturn(flight);
 
-        assertThrows(InvalidScheduleTimeException.class,()->airLineService.addSchedule(new ScheduleDTO(schedule)));
+        when(flightRepository.findFlightById(1L)).thenReturn(flight);
+        ScheduleDTO dto = new ScheduleDTO(schedule);
+
+        assertThrows(InvalidScheduleTimeException.class, () -> airLineService.addSchedule(dto));
     }
+
 
     @Test
     void addSchedule_throwsCityNotFound() {
@@ -138,7 +144,7 @@ public class AirLineTest {
         toCity.setId(3L);
 
         ScheduleDTO dto = new ScheduleDTO(null, 1L, 2L, 3L, LocalDate.now().plusDays(1),
-                LocalDateTime.now().plusHours(2), 500f, 100, 120);
+                LocalDateTime.now().plusHours(2), 500f, 60, 120);
 
         when(flightRepository.findFlightById(1L)).thenReturn(flight);
         when(cityRepository.findCitiesById(2L)).thenReturn(fromCity);
@@ -152,7 +158,13 @@ public class AirLineTest {
 
         when(kafka.send(anyString(), any())).thenReturn(null);
 
-        airLineService.addSchedule(dto);
+        Schedule result = airLineService.addSchedule(dto);
+        assertEquals(dto.seatsAvailable(), result.getSeatsAvailable());
+        assertEquals(dto.price(), result.getPrice());
+        assertEquals(dto.departureDate(), result.getDepartureDate());
+        assertEquals(dto.departureTime(), result.getDepartureTime());
+        assertEquals(dto.duration(), result.getDuration());
+
     }
 
 }
