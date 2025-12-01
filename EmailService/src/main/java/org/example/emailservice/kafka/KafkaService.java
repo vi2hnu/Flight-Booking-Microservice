@@ -1,7 +1,7 @@
 package org.example.emailservice.kafka;
 
 import org.example.emailservice.dto.KafkaTicketDTO;
-//import org.example.emailservice.dto.ScheduleDTO;
+import org.example.emailservice.dto.ScheduleDTO;
 import org.example.emailservice.service.EmailInterface;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -25,8 +25,8 @@ public class KafkaService {
         emailInterface.sendCancellationEmail(kafkaTicketDTO);
     }
 
-//    @KafkaListener(topics = "schedule.added")
-//    public void scheduledAddedEmail(ScheduleDTO scheduleDTO){
-//        emailInterface.scheduledAddedEmail(scheduleDTO);
-//    }
+    @KafkaListener(topics = "schedule.added")
+    public void scheduledAddedEmail(ScheduleDTO scheduleDTO){
+        emailInterface.scheduledAddedEmail(scheduleDTO);
+    }
 }

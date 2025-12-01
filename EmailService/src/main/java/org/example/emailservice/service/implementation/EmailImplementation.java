@@ -71,7 +71,15 @@ public class EmailImplementation implements EmailInterface {
 
         mail.setFrom(sender);
         mail.setTo(sender); //should be admin here, once auth and access control has been learnt this can be implemented properly
-        mail.setText("Schedule Added: "+scheduleDTO.toString());
+        String body =
+                "Schedule has been added\n\n" +
+                        "FromID: " + scheduleDTO.fromCityId() + "\n" +
+                        "ToID: " + scheduleDTO.toCityId() + "\n" +
+                        "Date: " + scheduleDTO.departureDate() + "\n" +
+                        "Time: " + scheduleDTO.departureTime() + "\n" +
+                        "Price: " + scheduleDTO.price() + "\n\n";
+
+        mail.setText(body);
         mail.setSubject("Schedule Created");
         javaMailSender.send(mail);
     }
