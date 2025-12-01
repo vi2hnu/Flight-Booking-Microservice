@@ -62,7 +62,6 @@ public class TicketBookingService implements TicketBookingInterface {
 
         kafka.send("ticket.booked",new KafkaSeatsDTO(outbound.id(),seatsDTO));
 
-//        flightClient.reserveSeats(outbound.id(), seatsDTO);
 
         Ticket saved = createTicket(ticketDTO, outbound, returnTrip);
 

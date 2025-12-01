@@ -92,7 +92,6 @@ public class TicketDetailsService implements TicketDetailsInterface {
         ticket.setStatus(Status.CANCELED);
         ticketRepository.save(ticket);
 
-//        flightClient.addSeats(ticket.getScheduleId(),ticket.getPassengers().size());
         kafka.send("add.seats",new AddSeatsDTO(ticket.getScheduleId(),ticket.getPassengers().size()));
 
         List<String> seats = new ArrayList<>();
@@ -105,7 +104,6 @@ public class TicketDetailsService implements TicketDetailsInterface {
 
         //send request to flight service to mark the seats as vacant
         kafka.send("ticket.cancelled",new KafkaSeatsDTO(ticket.getScheduleId(),new SeatsDTO(seats)));
-//        flightClient.deleteSeats(ticket.getScheduleId(),new SeatsDTO(seats));
 
         return ticket;
     }
