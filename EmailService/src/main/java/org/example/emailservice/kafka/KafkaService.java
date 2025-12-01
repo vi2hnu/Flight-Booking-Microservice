@@ -1,7 +1,7 @@
 package org.example.emailservice.kafka;
 
 import org.example.emailservice.dto.KafkaTicketDTO;
-import org.example.emailservice.dto.ScheduleDTO;
+//import org.example.emailservice.dto.ScheduleDTO;
 import org.example.emailservice.service.EmailInterface;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
