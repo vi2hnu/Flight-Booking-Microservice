@@ -106,7 +106,7 @@ public class TicketDetailsService implements TicketDetailsInterface {
         ticket.getPassengers().stream()
                         .forEach(passenger->passengers.add(new PassengerDTO(passenger)));
 
-        kafka.send("ticket.cancelled",new KafkaTicketDTO(ticket.getBookedByUsers(),schedule,returnTrip,passengers));
+        kafka.send("ticket.cancelled",new KafkaTicketDTO(ticket.getBookedByUsers(),schedule,returnTrip,passengers,pnr));
 
         return ticket;
     }

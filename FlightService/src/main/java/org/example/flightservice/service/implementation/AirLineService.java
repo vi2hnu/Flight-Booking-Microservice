@@ -13,6 +13,7 @@ import org.example.flightservice.repository.CityRepository;
 import org.example.flightservice.repository.FlightRepository;
 import org.example.flightservice.repository.ScheduleRepository;
 import org.example.flightservice.service.AirLineInterface;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -25,12 +26,14 @@ public class AirLineService implements AirLineInterface {
     private final ScheduleRepository scheduleRepository;
     private final FlightRepository flightRepository;
     private final CityRepository cityRepository;
+    private final KafkaTemplate<String,ScheduleDTO> kafka;
 
     public AirLineService(ScheduleRepository scheduleRepository, FlightRepository flightRepository,
-                          CityRepository cityRepository) {
+                          CityRepository cityRepository,KafkaTemplate<String,ScheduleDTO> kafka) {
         this.scheduleRepository = scheduleRepository;
         this.flightRepository = flightRepository;
         this.cityRepository = cityRepository;
+        this.kafka = kafka;
     };
 
     @Override
@@ -87,6 +90,9 @@ public class AirLineService implements AirLineInterface {
         schedule.setDuration(scheduleDTO.duration());
         schedule.setDepartureDate(scheduleDTO.departureDate());
         schedule.setPrice(scheduleDTO.price());
+
+        kafka.send("schedule.added",scheduleDTO);
+
         return scheduleRepository.save(schedule);
     }
 

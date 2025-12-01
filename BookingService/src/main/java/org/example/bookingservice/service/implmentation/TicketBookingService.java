@@ -60,10 +60,11 @@ public class TicketBookingService implements TicketBookingInterface {
             throw new SeatNotAvailableException("Not enough seats available");
         }
 
-        kafka.send("ticket.booked",new KafkaTicketDTO(ticketDTO.user(),outbound,returnTrip,ticketDTO.passengers()));
-
         Ticket saved = createTicket(ticketDTO, outbound, returnTrip);
 
+        kafka.send("ticket.booked",new KafkaTicketDTO(ticketDTO.user(),outbound,returnTrip,ticketDTO.passengers(),
+                                            saved.getPnr()));
+        
         savePassengers(saved, ticketDTO);
 
         return saved;

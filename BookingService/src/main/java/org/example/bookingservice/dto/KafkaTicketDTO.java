@@ -8,5 +8,6 @@ public record KafkaTicketDTO(
         Users user,
         ScheduleDTO scheduleDTO,
         ScheduleDTO returnTripDTO,
-        List<PassengerDTO> passengers
+        List<PassengerDTO> passengers,
+        String pnr
 ){}
