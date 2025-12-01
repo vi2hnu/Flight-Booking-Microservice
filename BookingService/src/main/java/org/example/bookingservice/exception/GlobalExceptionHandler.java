@@ -35,15 +35,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMap);
     }
 
-    @ExceptionHandler(CityNotFoundException.class)
-    public ResponseEntity<String> handleCityNotFound(CityNotFoundException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(FlightNotFoundException.class)
-    public ResponseEntity<String> handleFlightNotFound(FlightNotFoundException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
-    }
 
     @ExceptionHandler(UsersNotFoundException.class)
     public ResponseEntity<String> handleUserNotFound(UsersNotFoundException ex) {
@@ -53,11 +44,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(TicketNotFoundException.class)
     public ResponseEntity<String> handleTicketNotFound(TicketNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(ScheduleConflictException.class)
-    public ResponseEntity<String> handleScheduleConflict(ScheduleConflictException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(InvalidScheduleTimeException.class)

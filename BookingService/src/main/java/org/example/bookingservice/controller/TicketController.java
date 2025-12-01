@@ -2,7 +2,6 @@ package org.example.bookingservice.controller;
 
 import org.example.bookingservice.model.entity.Ticket;
 import org.example.bookingservice.service.TicketDetailsInterface;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
