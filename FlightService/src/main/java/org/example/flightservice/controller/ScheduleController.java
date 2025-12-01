@@ -28,4 +28,14 @@ public class ScheduleController {
         return scheduleService.checkSeats(id, seatsDTO);
     }
 
+    @PostMapping("/reserve/seats/{id}")
+    public boolean reserveSeats(@PathVariable Long id, @RequestBody SeatsDTO seatsDTO) {
+        return scheduleService.reserveSeats(id, seatsDTO);
+    }
+
+    @DeleteMapping("/delete/seats/{id}")
+    void deleteSeats(@PathVariable("id") Long id, @RequestBody SeatsDTO seatsDTO) {
+        scheduleService.deleteSeats(id,seatsDTO);
+    }
+
 }

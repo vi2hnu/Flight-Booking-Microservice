@@ -15,4 +15,9 @@ public interface FlightClient {
     @PostMapping("/api/schedule/check/seats/{id}")
     boolean checkSeats(@PathVariable("id") Long id, @RequestBody SeatsDTO seatsDTO);
 
+    @PostMapping("/api/schedule/reserve/seats/{id}")
+    boolean reserveSeats(@PathVariable("id") Long id, @RequestBody SeatsDTO seatsDTO);
+
+    @DeleteMapping("/api/schedule/delete/seats/{id}")
+    void deleteSeats(@PathVariable("id") Long id,@RequestBody SeatsDTO seatsDTO);
 }
