@@ -26,7 +26,6 @@ public class AirlineController {
 
     @PostMapping("/inventory")
     public ResponseEntity<Schedule> addSchedule(@Valid @RequestBody ScheduleDTO schedule) {
-        log.info("Adding schedule to flight:{}", schedule);
         return ResponseEntity.status(HttpStatus.CREATED).body(airLineInterface.addSchedule(schedule));
     }
 

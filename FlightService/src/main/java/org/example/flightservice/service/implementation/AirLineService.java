@@ -43,9 +43,10 @@ public class AirLineService implements AirLineInterface {
         Flight flight = flightRepository.findFlightById(scheduleDTO.flightId());
         //check if flight exits
         if(flight == null){
-            log.error("flight not found: {}", schedule.getFlight().getId());
-            throw new FlightNotFoundException("Conflict: schedule overlaps with existing flight timings.");
+            log.error("flight not found: {}", scheduleDTO.flightId());
+            throw new FlightNotFoundException("Flight not found");
         }
+
         int seats = flight.getColumns()*flight.getRows();
         schedule.setSeatsAvailable(seats);
         schedule.setFlight(flight);
