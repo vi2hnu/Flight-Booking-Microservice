@@ -37,6 +37,13 @@
 | GET    | /api/flight/booking/history/{emailId} | Get booked ticket history by email ID |
 | DELETE | /api/flight/booking/cancel/{pnr} | Cancel a booked ticket using PNR |
 
+
+---
+## Eureka Dashboard:
+<img width="1920" height="928" alt="Image" src="https://github.com/user-attachments/assets/ef965681-a369-45c4-b1f8-8fd2edc6f19c" />
+
+---
+
 ---
 ## Reports:
 ### SonarQube Report
@@ -71,7 +78,6 @@ newman report can be found in newman_report folder and REPORT.docx
 ### Postman
 postman images and sample api request and response can be found in REPORT.docx
 
----
 ## Email Service
 ### Ticket booking
 #### Email:
