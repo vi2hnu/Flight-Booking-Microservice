@@ -75,3 +75,25 @@ newman report can be found in newman_report folder and REPORT.docx
 ### Postman
 postman images and sample api request and response can be found in REPORT.docx
 
+---
+## Email Service
+### Ticket booking
+#### Email:
+<img width="1347" height="634" alt="Image" src="https://github.com/user-attachments/assets/fbbe6ef2-a1fb-4e36-bec7-cd4c76ac7444" />
+
+#### Kafka Topic:
+<img width="1787" height="504" alt="Image" src="https://github.com/user-attachments/assets/ad12662a-c672-48f9-8c1a-7681303b63e2" />
+
+### Ticket cancellation
+#### Email:
+<img width="1371" height="291" alt="Image" src="https://github.com/user-attachments/assets/fb3f7f9f-94c5-46b6-afbe-4c6ac4c395f2" />
+
+#### Kafka Topic:
+<img width="1789" height="564" alt="Image" src="https://github.com/user-attachments/assets/ebb9687a-67da-41d9-98fe-3c8351af236a" />
+
+### Flight added to inventory
+### Email:
+<img width="1314" height="424" alt="Image" src="https://github.com/user-attachments/assets/3c0114c9-093e-4ba4-a03b-d87e52d995b9" />
+
+### Kafka Topic:
+<img width="1787" height="269" alt="Image" src="https://github.com/user-attachments/assets/63f9c3ee-b1e9-4415-b304-557aa8025d9f" />
